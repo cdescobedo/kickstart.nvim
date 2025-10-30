@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -102,7 +102,7 @@ vim.g.have_nerd_font = false
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
+vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
@@ -151,6 +151,8 @@ vim.o.splitbelow = true
 --   and `:help lua-options-guide`
 vim.o.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
 
 -- Preview substitutions live, as you type!
 vim.o.inccommand = 'split'
@@ -216,6 +218,17 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
     vim.hl.on_yank()
+  end,
+})
+
+vim.api.nvim_create_autocmd('ColorScheme', {
+  desc = 'Make SignColumn and LineNr transparent after colorscheme loads',
+  callback = function()
+    -- Set the background of the gutter to NONE (transparent)
+    vim.api.nvim_set_hl(0, 'SignColumn', { bg = '#1f2335' })
+
+    -- Set LineNr background to NONE if needed
+    vim.api.nvim_set_hl(0, 'LineNr', { bg = 'NONE' })
   end,
 })
 
@@ -895,6 +908,14 @@ require('lazy').setup({
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
       vim.cmd.colorscheme 'tokyonight-night'
+    end,
+    on_highlights = function(hl, c)
+      -- To make the '~' characters a very subtle, dark gray:
+      hl.EndOfBuffer = { fg = '#3A3A3A' }
+
+      -- ALTERNATIVE: To make the '~' characters completely invisible,
+      -- set the foreground color (fg) to the theme's background color (c.bg).
+      -- hl.EndOfBuffer = { fg = c.bg }
     end,
   },
 
