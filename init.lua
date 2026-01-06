@@ -216,6 +216,19 @@ vim.keymap.set('n', '<M-s>', '<cmd>silent !tmux neww tmux-sessionizer -s 3<CR>')
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
+-- Go template filetype detection
+vim.filetype.add {
+  extension = {
+    tmpl = 'gotmpl',
+    gohtml = 'gotmpl',
+    gotmpl = 'gotmpl',
+  },
+  pattern = {
+    ['.*%.html%.tmpl'] = 'gotmpl',
+    ['.*%.tmpl%.html'] = 'gotmpl',
+  },
+}
+
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
 --  See `:help vim.hl.on_yank()`
@@ -705,8 +718,24 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- clangd = {},
-        -- gopls = {},
-        -- pyright = {},
+        gopls = {},
+        -- HTML LSP for Go templates
+        html = {
+          filetypes = { 'html', 'templ', 'gotmpl', 'gohtmltmpl', 'gohtml' },
+        },
+        pyright = {
+          settings = {
+            python = {
+              analysis = {
+                autoImportCompletions = true,
+                typeCheckingMode = 'basic',
+              },
+              venvPath = '.',
+              venv = '.venv',
+            },
+          },
+        },
+        postgres_lsp = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -749,6 +778,10 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'goimports',
+        'goimports-reviser',
+        'pyright',
+        'html-lsp', -- HTML LSP for Go templates
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -801,8 +834,10 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        go = { 'goimports' },
         -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
+        python = { 'ruff' },
+        sql = { 'sqlfluff' },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
@@ -985,7 +1020,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'go', 'gotmpl' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -1023,6 +1058,61 @@ require('lazy').setup({
       global_keymaps_prefix = '<leader>R',
       kulala_keymaps_prefix = '',
     },
+  },
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    keys = {
+      { '<leader>ld', desc = '[L]azy[D]ocker' },
+      { '<leader>lg', desc = '[L]azy[G]it' },
+      { '<C-\\>', desc = 'Toggle terminal' },
+    },
+    opts = {
+      open_mapping = [[<C-\>]],
+      direction = 'float',
+      float_opts = {
+        border = 'curved',
+      },
+    },
+    config = function(_, opts)
+      require('toggleterm').setup(opts)
+
+      local Terminal = require('toggleterm.terminal').Terminal
+
+      local lazydocker = Terminal:new {
+        cmd = 'lazydocker',
+        hidden = true,
+        direction = 'float',
+        float_opts = {
+          border = 'curved',
+        },
+        on_open = function(term)
+          vim.cmd 'startinsert!'
+          vim.api.nvim_buf_set_keymap(term.bufnr, 't', 'q', 'q', { noremap = true, silent = true })
+        end,
+      }
+
+      local lazygit = Terminal:new {
+        cmd = 'lazygit',
+        hidden = true,
+        direction = 'float',
+        float_opts = {
+          border = 'curved',
+        },
+        on_open = function(term)
+          vim.cmd 'startinsert!'
+          vim.api.nvim_buf_set_keymap(term.bufnr, 't', 'q', 'q', { noremap = true, silent = true })
+        end,
+      }
+
+      vim.keymap.set('n', '<leader>ld', function()
+        lazydocker:toggle()
+      end, { desc = '[L]azy[D]ocker' })
+
+      vim.keymap.set('n', '<leader>lg', function()
+        lazygit:toggle()
+      end, { desc = '[L]azy[G]it' })
+    end,
   },
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
