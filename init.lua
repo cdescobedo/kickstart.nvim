@@ -723,7 +723,7 @@ require('lazy').setup({
         html = {
           filetypes = { 'html', 'templ', 'gotmpl', 'gohtmltmpl', 'gohtml' },
         },
-        pyright = {
+        basedpyright = {
           settings = {
             python = {
               analysis = {
@@ -780,7 +780,7 @@ require('lazy').setup({
         'stylua', -- Used to format Lua code
         'goimports',
         'goimports-reviser',
-        'pyright',
+        'basedpyright',
         'html-lsp', -- HTML LSP for Go templates
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
