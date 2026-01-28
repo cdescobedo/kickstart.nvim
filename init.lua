@@ -573,6 +573,7 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
+        bashls = {},
         clangd = {
           filetypes = { 'c', 'cpp', 'objc', 'objcpp' },
         },
@@ -652,6 +653,9 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'bash-language-server', -- Bash LSP
+        'shellcheck', -- Bash linter (used by bashls)
+        'shellharden', -- Bash formatter
         'goimports', -- Adds missing imports and removes unused ones
         'goimports-reviser',
         'basedpyright',
@@ -710,6 +714,8 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        sh = { 'shfmt', 'shellharden' },
+        bash = { 'shfmt', 'shellharden' },
         go = { 'goimports', 'goimports-reviser' },
         templ = { 'templ' },
         -- Conform can also run multiple formatters sequentially
@@ -720,6 +726,9 @@ require('lazy').setup({
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
       },
       formatters = {
+        shellharden = {
+          timeout_ms = 2000,
+        },
         sql_formatter = {
           prepend_args = {
             '--config',
