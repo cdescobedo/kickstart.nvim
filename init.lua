@@ -308,6 +308,18 @@ require('lazy').setup({
             hidden = true,
             no_ignore = true,
           },
+          lsp_definitions = {
+            file_ignore_patterns = {},
+          },
+          lsp_references = {
+            file_ignore_patterns = {},
+          },
+          lsp_implementations = {
+            file_ignore_patterns = {},
+          },
+          lsp_type_definitions = {
+            file_ignore_patterns = {},
+          },
         },
 
         extensions = {
@@ -600,13 +612,11 @@ require('lazy').setup({
         templ = {},
         basedpyright = {
           settings = {
-            python = {
+            basedpyright = {
               analysis = {
                 autoImportCompletions = true,
                 typeCheckingMode = 'basic',
               },
-              venvPath = '.',
-              venv = '.venv',
             },
           },
         },
@@ -719,7 +729,7 @@ require('lazy').setup({
         go = { 'goimports', 'goimports-reviser' },
         templ = { 'templ' },
         -- Conform can also run multiple formatters sequentially
-        python = { 'ruff' },
+        python = { 'ruff_organize_imports', 'ruff_fix', 'ruff_format' },
         sql = { 'sql_formatter' },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
@@ -890,7 +900,7 @@ require('lazy').setup({
       require('mini.surround').setup()
 
       -- Comment with gc (gcc for line, gc in visual mode)
-      require('mini.comment').setup({
+      require('mini.comment').setup {
         options = {
           custom_commentstring = function()
             if vim.bo.filetype == 'templ' then
@@ -898,7 +908,7 @@ require('lazy').setup({
             end
           end,
         },
-      })
+      }
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
@@ -939,7 +949,26 @@ require('lazy').setup({
       require('nvim-treesitter.configs').setup(opts)
     end,
     opts = {
-      ensure_installed = { 'bash', 'c', 'cpp', 'objc', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'go', 'gotmpl', 'templ', 'css', 'datastar' },
+      ensure_installed = {
+        'bash',
+        'c',
+        'cpp',
+        'objc',
+        'diff',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'vim',
+        'vimdoc',
+        'go',
+        'gotmpl',
+        'templ',
+        'css',
+        'datastar',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
