@@ -37,7 +37,6 @@ return {
       },
     },
   },
-
   {
     'folke/snacks.nvim',
     ---@type snacks.Config
@@ -115,6 +114,26 @@ return {
       { 'gao', function() Snacks.picker.lsp_outgoing_calls() end, desc = 'C[a]lls Outgoing' },
       { '<leader>ss', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
       { '<leader>sS', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
+    },
+  },
+  {
+    'NvChad/nvim-colorizer.lua',
+    opts = {
+      user_default_options = {
+        RGB = true, -- #RGB hex codes
+        RRGGBB = true, -- #RRGGBB hex codes
+        names = true, -- "Name" codes like 'blue' or 'tomato'
+        RRGGBBAA = true, -- #RRGGBBAA hex codes
+        AARRGGBB = true, -- 0xAARRGGBB hex codes
+        rgb_fn = true, -- CSS rgb() and rgba() functions
+        hsl_fn = true, -- CSS hsl() and hsla() functions
+        css = true, -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
+        css_fn = true, -- Enable all CSS *functions*: rgb_fn, hsl_fn
+
+        -- You can change this to "foreground" or "virtualtext" if you prefer
+        mode = 'background', -- Sets the highlight mode
+        virtualtext = '■',
+      },
     },
   },
 }
